@@ -1,0 +1,131 @@
+<h1 class="header">Welcome to Car Simulation</h1>
+
+<h2 class="sub-header">Welcome to Auto Driving Car Simulation!</h2>
+
+<h2 *ngIf="showExitMessage" class="sub-header">Thank you for running the simulation. Goodbye!</h2>
+
+<div class="simulation-container">
+    <div class="form-container">
+      <form [formGroup]="simulationForm">
+        <div *ngIf="showFirstMenu">
+            <p class="mat-body text">Please enter the width and height of the simulation field in x y format</p>
+            <mat-form-field class="form-field" appearance="outline">
+                <mat-label> X:
+                </mat-label>
+                <input matInput formControlName="xMax" (ngModelChange)="validateXMax($event)" required>
+                <mat-error *ngIf="isXMaxInvalid">
+                  <span>Invalid Input</span>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Y:
+                </mat-label>
+                <input matInput formControlName="yMax" (ngModelChange)="validateYMax($event)" required>
+                <mat-error *ngIf="isYMaxInvalid">
+                  <span>Invalid Input</span>
+                </mat-error>
+              </mat-form-field>
+              <button [disabled]="!simulationForm.valid" mat-raised-button color="primary" (click)="handleNext(1)">Next</button>
+        </div>
+        <p *ngIf="showGraphInfo" class="mat-body text">You have created a field of {{xMax}} x {{yMax}}.</p>
+        <div *ngIf="showCarInfo">
+          <p class="mat-body text">Your current list of cars are:</p>
+          <div *ngFor="let car of carDTOArray">
+            <p class="mat-body text">- {{car.carName}}, ({{car.currentX}},{{car.currentY}}) {{car.currentDirection}}, {{car.simulationCommand}}</p>
+          </div>
+        </div>
+        <div *ngIf="showSecondMenu">
+            <p class="mat-body text">Please choose from the following options:</p>
+            <p class="mat-body text">[1] Add a car to field</p>
+            <p class="mat-body text">[2] Run Simulation</p>
+            <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Option:
+                </mat-label>
+                <input matInput formControlName="userOption" (ngModelChange)="optionInput($event)" required>
+                <mat-error *ngIf="isOptionInvalid">
+                    <span>Invalid Input</span>
+                </mat-error>
+              </mat-form-field>
+              <p *ngIf="noCarError" class="mat-body text no-car-error">No Cars Present to run Simulation</p>
+              <button [disabled]="!simulationForm.valid" mat-raised-button color="primary" (click)="submitForm(1)">Submit</button>
+        </div>
+        <div *ngIf="addCarMenu" formArrayName="carDTOList">
+          <div *ngFor="let car of carDTOList.controls; let i = index">
+            <div [formGroupName]="i">
+              <p>Please enter the name of the car: </p>
+              <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Car Name:
+                </mat-label>
+                <input matInput formControlName="carName" required>
+              </mat-form-field>
+              <p>Please enter initial position of car :</p>
+              <mat-form-field class="form-field" appearance="outline">
+                <mat-label> X:
+                </mat-label>
+                <input matInput formControlName="currentX" (ngModelChange)="validateXInput($event)" required>
+                <mat-error *ngIf="isInvalidX">
+                  <span>Start X cannot be more than {{xMax-1}}</span>
+                </mat-error>
+                <mat-error *ngIf="isInvalidXInput">
+                  <span>Invalid Input</span>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Y:
+                </mat-label>
+                <input matInput formControlName="currentY" (ngModelChange)="validateYInput($event)" required>
+                <mat-error *ngIf="isInvalidY">
+                  <span>Start Y cannot be more than {{yMax-1}}</span>
+                </mat-error>
+                <mat-error *ngIf="isInvalidYInput">
+                  <span>Invalid Input</span>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Direction:
+                </mat-label>
+                <input matInput [placeholder]="'Accepted Directions: N,S,W,E'" formControlName="currentDirection" (ngModelChange)="validateDirectionInput($event)" required>
+                <mat-error  *ngIf="isInvalidDirection">
+                  <span>Invalid Directions</span>
+                </mat-error>
+              </mat-form-field>
+              <p>Please enter the commands for the car: </p>
+              <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Commands:
+                </mat-label>
+                <input matInput [placeholder]="'Accepted Directions: R,F,L'" formControlName="simulationCommand" (ngModelChange)="validateSimulationCommand($event)" required>
+                <mat-error  *ngIf="isInvalidCommands">
+                  <span>Invalid Commands</span>
+                </mat-error>
+              </mat-form-field>
+              <button [disabled]="!simulationForm.valid" mat-raised-button color="primary" (click)="handleNext(2)">Next</button>
+            </div>
+          </div>
+      </div>
+      <div *ngIf="showFinalMenu">
+          <div *ngIf="simulationResponse.length > 0">
+            <div *ngFor="let response of simulationResponse">
+              <p class="mat-body text">- {{response}}</p>
+            </div>
+          </div>
+          <div *ngIf="responseError">
+               Something went wrong, Please Try Again!!!
+          </div>
+          <div>
+            <p class="mat-body text">Please choose from the following options:</p>
+            <p class="mat-body text">[1] Start Over</p>
+            <p class="mat-body text">[2] Exit</p>
+            <mat-form-field class="form-field" appearance="outline">
+                <mat-label> Option:
+                </mat-label>
+                <input matInput formControlName="userOption" (ngModelChange)="optionInput($event)" required>
+                <mat-error *ngIf="isOptionInvalid">
+                    <span>Invalid Input</span>
+                </mat-error>
+              </mat-form-field>
+              <button [disabled]="!simulationForm.valid" mat-raised-button color="primary" (click)="submitForm(2)">Submit</button>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
