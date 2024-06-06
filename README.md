@@ -7,7 +7,7 @@ System Requirements:
 2. Node JS v15+.
 
 There are two projects
-1. Car Simulation - Java Project
+1. car-simulation-backend - Java Project
 2. car-simulation-ui - Angular Project
 
 In order to run the Car Simulation Java application
